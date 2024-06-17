@@ -60,9 +60,9 @@ namespace compsci_final_attempt_2
             windowBounds = window;
             background = window;
 
-            pauseButtonRect = new Rectangle(0, 0, 50, 100);
-            startButtonRect = new Rectangle(350, 150, 100, 150);
-            quitButtonRect = new Rectangle(350, 300, 100, 150);
+            pauseButtonRect = new Rectangle(0, 0, 100, 50);
+            startButtonRect = new Rectangle(350, 150, 150, 100);
+            quitButtonRect = new Rectangle(350, 300, 150, 100);
 
             moleSpawn1 = new Rectangle(100, 100, 100, 100);
             moleSpawn2 = new Rectangle(250, 300, 100, 100);
