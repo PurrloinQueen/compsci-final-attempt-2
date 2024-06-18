@@ -26,8 +26,8 @@ namespace compsci_final_attempt_2
         MouseState mouseState, prevMouseState;
         KeyboardState keyboardState, prevKeyboardState;
 
-        Texture2D mole, opening, yard, pause;
-        Rectangle window, windowBounds, background, moleSpawn1, moleSpawn2, moleSpawn3, pauseButtonRect, startButtonRect, quitButtonRect;
+        Texture2D mole, opening, yard, pause, mouseCursor;
+        Rectangle window, windowBounds, background, moleSpawn1, moleSpawn2, moleSpawn3, pauseButtonRect, startButtonRect, quitButtonRect, cursorRect;
         SpriteFont gameFont;
 
         SoundEffect bonk, missed;
@@ -40,7 +40,7 @@ namespace compsci_final_attempt_2
         int score, antiPoofX, antiPoofY, pauseClick, startClick, quitClick;
         bool moleHit, pauseButtonPressed, startButtonPressed, quitButtonPressed;
         float timer;
-        string titleText, pauseText, scoreText;
+        string titleText, pauseText, scoreText, winText, hintText;
         Random Generator = new Random();
 
 
@@ -85,7 +85,9 @@ namespace compsci_final_attempt_2
 
             titleText = "Whack-A-Mole";
             pauseText = "GAME PAUSED";
-            scoreText = score.ToString("0000");
+            scoreText = score.ToString();
+            winText = "Great Job!";
+            hintText = "There's no fancy keybinds, just click the moles. you got this.";
 
             pauseButton = new List<Texture2D>();
 
@@ -99,6 +101,8 @@ namespace compsci_final_attempt_2
             textBoxes.Add(new Vector2(250, 250));
             textBoxes.Add(new Vector2(0, 0));
             textBoxes.Add(new Vector2(350, 0));
+            textBoxes.Add(new Vector2(350, 250));
+            textBoxes.Add(new Vector2(250, 400));
 
         }
 
@@ -108,6 +112,7 @@ namespace compsci_final_attempt_2
 
             mole = Content.Load<Texture2D>("mole");
             pause = Content.Load<Texture2D>("pauseMole");
+            mouseCursor = Content.Load<Texture2D>("hammer_cursor");
 
             bonk = Content.Load<SoundEffect>("bonk");
             missed = Content.Load<SoundEffect>("honk");
@@ -130,7 +135,6 @@ namespace compsci_final_attempt_2
         {
             prevKeyboardState = keyboardState;
             prevMouseState = mouseState;
-
 
             keyboardState = Keyboard.GetState();
             mouseState = Mouse.GetState();
@@ -187,7 +191,7 @@ namespace compsci_final_attempt_2
                         timer = 0;
                         score = score + 1;
                     }
-                    else if (timer == Generator.Next(10, 30))
+                    else if (timer == 10)
                     {
                         missed.Play();
                         moleSpawn1.X = Generator.Next(0, antiPoofX);
@@ -205,7 +209,7 @@ namespace compsci_final_attempt_2
                         timer = 0;
                         score = score + 1;
                     }
-                    else if (timer == Generator.Next(10, 30))
+                    else if (timer == 10)
                     {
                         missed.Play();
                         moleSpawn2.X = Generator.Next(0, antiPoofX);
@@ -223,7 +227,7 @@ namespace compsci_final_attempt_2
                         timer = 0;
                         score = score + 1;
                     }
-                    else if (timer == Generator.Next(10, 30))
+                    else if (timer == 10)
                     {
                         missed.Play();
                         moleSpawn3.X = Generator.Next(0, antiPoofX);
@@ -248,6 +252,11 @@ namespace compsci_final_attempt_2
                     }
                 }
                
+                // checks 4 target score beated
+                if (score == Generator.Next(10, 100))
+                {
+                    _screen = Screen.End;
+                }
             }
             else if (_screen == Screen.Pause)
             {
@@ -267,6 +276,21 @@ namespace compsci_final_attempt_2
                 {
                     _screen = Screen.Main;
                     startButtonPressed = false;
+                }
+            }
+            else if (_screen == Screen.End)
+            {
+                if (quitButtonRect.Contains(mouseState.X, mouseState.Y))
+                {
+                    if (mouseState.LeftButton == ButtonState.Pressed)
+                    {
+                        quitClick = 1;
+                        Exit();
+                    }
+                    else
+                    {
+                        quitClick = 0;
+                    }
                 }
             }
 
@@ -302,7 +326,14 @@ namespace compsci_final_attempt_2
             {
                 _spriteBatch.Draw(pause, background, Color.White);
                 _spriteBatch.DrawString(gameFont, pauseText, textBoxes[0], Color.White);
+                _spriteBatch.DrawString(gameFont, hintText, textBoxes[4], Color.White);
                 _spriteBatch.Draw(startButton[startClick], startButtonRect, Color.White);
+            }
+            if (_screen == Screen.End)
+            {
+                _spriteBatch.Draw(pause, background, Color.White);
+                _spriteBatch.DrawString(gameFont, winText, textBoxes[2], Color.White);
+                _spriteBatch.Draw(quitButton[quitClick], quitButtonRect, Color.White);
             }
 
             _spriteBatch.End();
